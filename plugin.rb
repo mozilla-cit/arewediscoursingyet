@@ -12,6 +12,4 @@ after_initialize do
 
   load File.expand_path("../app/jobs/job.rb", __FILE__)
   load File.expand_path("../app/jobs/new_users_by_date.rb", __FILE__)
-
-  ::PluginStore.remove('awdy', 'stats')
 end

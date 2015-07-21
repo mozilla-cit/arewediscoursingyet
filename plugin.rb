@@ -10,7 +10,8 @@ load File.expand_path('../lib/stats/engine.rb', __FILE__)
 after_initialize do
   require_dependency File.expand_path('../integrate.rb', __FILE__)
 
-  load File.expand_path("../app/jobs/generate.rb", __FILE__)
+  load File.expand_path("../app/jobs/job.rb", __FILE__)
+  load File.expand_path("../app/jobs/new_users_by_date.rb", __FILE__)
 
   ::PluginStore.remove('awdy', 'stats')
 end

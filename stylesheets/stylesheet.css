@@ -4,3 +4,13 @@ body {
   font: 16px;
   line-height: 1.5;
 }
+
+.ct-line {
+  stroke: black;
+  stroke-width: 1px;
+}
+
+.ct-point {
+  stroke: black;
+  stroke-width: 1px;
+}

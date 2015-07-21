@@ -1,5 +1,7 @@
 var apiData = {
   "new_users_by_date": {
+    "2014-03-01": 1,
+    "2015-07-20": 1000,
     "2014-12-07": 1,
     "2014-12-15": 1,
     "2014-12-16": 1,
@@ -12,7 +14,7 @@ var apiData = {
     "2015-01-09": 1,
     "2014-12-06": 4,
     "2015-02-07": 1,
-    "2015-07-08": 1
+    "2015-07-08": 1,
   }
 }
 
@@ -23,6 +25,8 @@ for (var day in apiData.new_users_by_date) {
   if (date < oldestDay)
     oldestDay = date
 }
+
+oldestDay.startOf('month')
 
 var days = moment().diff(oldestDay, 'days')
 var labels = new Array(days)
@@ -36,12 +40,17 @@ for (var index = 0; index < days; index++) {
   if (number) {
     lastNumber += number
     series[index] = lastNumber
+  } else if (!index) {
+    series[index] = 0
   }
 }
 
 for (var index = 0; index < days; index++) {
   var day = moment(oldestDay).add(index, 'days')
-  var dayString = day.format('MMM ’YY')
+  if (!index || !day.month())
+    var dayString = day.format('MMM ’YY')
+  else
+    var dayString = day.format('MMM')
   var dayOfMonth = day.date()
   if (dayOfMonth === 1)
     labels[index] = dayString
@@ -55,7 +64,7 @@ var data = {
 }
 
 var options = {
-  showPoint: false,
+  //showPoint: false,
   //lineSmooth: false,
   lineSmooth: Chartist.Interpolation.step({
     postpone: true

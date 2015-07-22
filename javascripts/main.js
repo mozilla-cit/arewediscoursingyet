@@ -1,80 +1,87 @@
-var apiData = {
-  "new_users_by_date": {
-    "2014-03-01": 1,
-    "2015-07-20": 1000,
-    "2014-12-07": 1,
-    "2014-12-15": 1,
-    "2014-12-16": 1,
-    "2014-12-19": 1,
-    "2014-12-08": 2,
-    "2014-12-20": 1,
-    "2014-12-13": 1,
-    "2015-01-12": 2,
-    "2014-12-14": 1,
-    "2015-01-09": 1,
-    "2014-12-06": 4,
-    "2015-02-07": 1,
-    "2015-07-08": 1,
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var formatDate = d3.time.format('%Y-%m-%d')
+var parseDate = formatDate.parse;
+
+var x = d3.time.scale()
+        .range([0, width]);
+
+var y = d3.scale.linear()
+        .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient('bottom');
+
+var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient('left');
+
+var line = d3.svg.line()
+           .x(function (d) { return x(d.date) })
+           .y(function (d) { return y(d.users) });
+
+var svg = d3.select('body')
+          .append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+          .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+
+d3.json('http://csa-discourse.mofostaging.net/awdy/stats.json', function (error, stats) {
+  if (error) throw error
+
+  var new_users_by_date = stats.new_users_by_date.data
+
+  var oldestDay = new Date()
+
+  for (var day in new_users_by_date) {
+    var date = parseDate(day)
+    if (date < oldestDay)
+      oldestDay = date
   }
-}
 
-var oldestDay = moment()
+  oldestDay = d3.time.month.floor(oldestDay)
 
-for (var day in apiData.new_users_by_date) {
-  var date = moment(day)
-  if (date < oldestDay)
-    oldestDay = date
-}
+  var days = d3.time.day.range(oldestDay, new Date())
+  var data = new Array(days.length)
+  var lastNumber = 0
 
-oldestDay.startOf('month')
+  days.forEach(function (day, index) {
+    var dayString = formatDate(day)
+    data[index] = {}
+    data[index].date = day
+    var number = new_users_by_date[dayString]
+    if (number) {
+      lastNumber += number
+      data[index].users = lastNumber
+    } else {
+      data[index].users = lastNumber
+    }
+  })
 
-var days = moment().diff(oldestDay, 'days')
-var labels = new Array(days)
-var series = new Array(days)
-var lastNumber = 0
+  x.domain(d3.extent(data, function (d) { return d.date }))
+  y.domain(d3.extent(data, function (d) { return d.users }))
 
-for (var index = 0; index < days; index++) {
-  var day = moment(oldestDay).add(index, 'days')
-  var dayString = day.format('YYYY-MM-DD')
-  var number = apiData.new_users_by_date[dayString]
-  if (number) {
-    lastNumber += number
-    series[index] = lastNumber
-  } else if (!index) {
-    series[index] = 0
-  }
-}
+  svg.append('g')
+       .attr('class', 'x axis')
+       .attr('transform', 'translate(0,' + height + ')')
+       .call(xAxis);
 
-for (var index = 0; index < days; index++) {
-  var day = moment(oldestDay).add(index, 'days')
-  if (!index || !day.month())
-    var dayString = day.format('MMM ’YY')
-  else
-    var dayString = day.format('MMM')
-  var dayOfMonth = day.date()
-  if (dayOfMonth === 1)
-    labels[index] = dayString
-}
+  svg.append('g')
+       .attr('class', 'y axis')
+       .call(yAxis)
+     .append('text')
+       .attr('transform', 'rotate(-90)')
+       .attr('y', 6)
+       .attr('dy', '.71em')
+       .style('text-anchor', 'end')
+       .text('Total Users');
 
-var data = {
-  labels: labels,
-  series: [
-    series
-  ]
-}
-
-var options = {
-  //showPoint: false,
-  //lineSmooth: false,
-  lineSmooth: Chartist.Interpolation.step({
-    postpone: true
-  }),
-  axisX: {
-    onlyInteger: true
-  },
-  axisY: {
-    onlyInteger: true,
-  }
-}
-
-new Chartist.Line('.ct-chart', data, options)
+  svg.append('path')
+       .datum(data)
+       .attr('class', 'line')
+       .attr('d', line);
+});

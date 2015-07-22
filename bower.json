@@ -8,7 +8,6 @@
   "description": "Are we Discoursing yet?",
   "license": "MPL-2.0",
   "dependencies": {
-    "chartist": "~0.9.1",
-    "moment": "~2.10.3"
+    "d3": "~3.5.6"
   }
 }

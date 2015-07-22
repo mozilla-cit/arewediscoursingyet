@@ -1,7 +1,6 @@
 body {
   margin: 0;
   padding: 0;
-  /*font: 16px;*/
   line-height: 1.5;
   font: 10px sans-serif;
 }
@@ -13,12 +12,13 @@ body {
   shape-rendering: crispEdges;
 }
 
-.x.axis path {
-  display: none;
-}
-
 .line {
   fill: none;
   stroke: steelblue;
   stroke-width: 1.5px;
+}
+
+.tick line {
+  opacity: 0.2;
+  stroke-dasharray: 5,5;
 }

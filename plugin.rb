@@ -1,6 +1,6 @@
 # name: arewediscoursingyet
 # about: plugin exposing stats we want to display on arewediscoursingyet.com
-# version: 0.0
+# version: 0.1
 # authors: Leo McArdle
 
 # load the engine

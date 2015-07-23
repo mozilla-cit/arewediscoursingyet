@@ -1,5 +1,5 @@
 Stats::Engine.routes.draw do
   namespace :stats, path: "" do
-    get "stats" => "stats#stats"
+    get "stats" => "stats#index"
   end
 end

@@ -1,3 +1,3 @@
 plugins:
   awdy_enabled:
-    default: false
+    default: true

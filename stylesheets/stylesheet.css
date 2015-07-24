@@ -3,6 +3,7 @@ body {
   padding: 0;
   line-height: 1.5;
   font: 10px sans-serif;
+  text-align: center;
 }
 
 .axis path,
